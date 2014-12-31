@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.android.customnotifications.event.NotificationEvent;
+
+import de.greenrobot.event.EventBus;
+
 /**
- * Created by cbess on 12/19/14.
+ * Represents the app widget provider.
  */
 public class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
     public static final String TAG = AppWidgetProvider.class.getSimpleName();
@@ -16,6 +20,18 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
         super.onReceive(context, intent);
 
         Log.i(TAG, intent.getAction());
+
+        // determine the action taken by the user, then create the event to post
+        NotificationEvent event = null;
+        if (intent.getAction().contentEquals(NotificationEvent.Type.UpCount.getName())) {
+            event = new NotificationEvent(NotificationEvent.Type.UpCount);
+        } else if (intent.getAction().contentEquals(NotificationEvent.Type.DownCount.getName())) {
+            event = new NotificationEvent(NotificationEvent.Type.DownCount);
+        }
+
+        if (event != null) {
+            EventBus.getDefault().post(event);
+        }
     }
 
     protected PendingIntent getPendingSelfIntent(Context context, String action) {
