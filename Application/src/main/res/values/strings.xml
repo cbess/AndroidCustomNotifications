@@ -17,9 +17,10 @@
 <resources>
 
     <string name="expanded">I\'m the expanded notification.\nCollapse me!</string>
-    <string name="collapsed">Collapsed! Created at: %s</string>
+    <string name="collapsed">Collapsed! Updated at: %s</string>
     <string name="show_notification">Show Notification</string>
     <string name="custom_notification">I\'m a custom notification.</string>
+    <string name="launch_activity">Launch Activity</string>
 
     <string name="intro_text">This sample demonstrates how a notification is created using the
         <b>NotificationCompatBuilder</b>

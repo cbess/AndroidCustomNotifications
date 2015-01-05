@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -35,6 +36,7 @@ import java.util.Date;
 import de.greenrobot.event.EventBus;
 
 public class MainActivity extends Activity {
+    public static final String TAG = MainActivity.class.getSimpleName();
     public static final int SECS = 1000;
     public static final int MINS = 60 * SECS;
     private CountDownTimer mDownTimer;
@@ -43,9 +45,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample_main);
+        setContentView(R.layout.activity_main);
 
         EventBus.getDefault().register(this);
+
+        Log.i(TAG, "Created");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.w(TAG, "Destroyed");
     }
 
     /**
@@ -63,17 +74,14 @@ public class MainActivity extends Activity {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         //Create Intent to launch this Activity again if the notification is clicked.
-        Intent i = new Intent(this, MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent intent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(intent);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
 
         // Sets the ticker text
         builder.setTicker(getResources().getString(R.string.custom_notification));
-
-        // Sets the small icon for the ticker
         builder.setSmallIcon(R.drawable.ic_stat_custom);
-
         // Cancel the notification when clicked
         builder.setAutoCancel(false);
 
@@ -129,9 +137,9 @@ public class MainActivity extends Activity {
      * This callback is defined through the 'onClick' attribute of the
      * 'Show Notification' button in the XML layout.
      *
-     * @param v View
+     * @param view View
      */
-    public void showNotificationClicked(View v) {
+    public void showNotificationClicked(View view) {
         postNotification();
 
         if (mDownTimer != null) {
@@ -151,6 +159,12 @@ public class MainActivity extends Activity {
         mDownTimer.start();
     }
 
+    public void showDetailActivityClicked(View view) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        startActivity(intent);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
     public void onEventMainThread(NotificationEvent event) {
         switch (event.getEventType()) {
             case UpCount:
